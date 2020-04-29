@@ -1,6 +1,6 @@
-# Reinforcement Learning: An Introduction
+# An overview of "*Reinforcement Learning: An Introduction (2nd edition)*"
 
-Notes on Sutton and Barto's second edition of the book from 2018. These are my main takeaways from structured in a per-chapter basis  Some information may be missing from the non-theoretical chapters and the introductory and *bandits* one.
+Notes on Sutton and Barto's second edition of the book from 2018. These are my main takeaways from the book structured in a per-chapter basis with a main focus on the theoretical aspects. 
 
 $$
 \DeclareMathOperator*{\E}{\mathbb{E}}
@@ -1184,5 +1184,9 @@ AlphaGo's version of MCTS called Asynchronous Policy and Value MCTS (APV-MCTS), 
 
 ## Acknowledgements
 
-This work was supported by the European Regional Development Fund and the Ro-manian Government through the Competitiveness Operational Programme 2014–2020, project ID P_37_679, MySMIS code 103319, contract no. 157/16.12.2016.
+This work was supported by the European Regional Development Fund and the Romanian Government through the Competitiveness Operational Programme 2014–2020, project ID P_37_679, MySMIS code 103319, contract no. 157/16.12.2016.
+
+## Copyright
+
+ © Nichita Uțiu. Distributed under the terms of the Creative Commons Attribution License, http://creativecommons.org/licenses/by/4.0/. This work was supported by the European Regional Development Fund and the Romanian Government through the Competitiveness Operational Programme 2014–2020, project ID P_37_679, MySMIS code 103319, contract no. 157/16.12.2016.
 
