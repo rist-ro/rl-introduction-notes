@@ -1,4 +1,4 @@
-# An overview of "*Reinforcement Learning: An Introduction (2nd edition)*"
+# An overview of "*Reinforcement Learning: An Introduction (2nd edition)*" - Nichita Uțiu - Romanian Institute of Science and technology
 
 Notes on Sutton and Barto's second edition of the book from 2018. These are my main takeaways from the book structured in a per-chapter basis with a main focus on the theoretical aspects. 
 
