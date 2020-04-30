@@ -1,6 +1,6 @@
 # An overview of "*Reinforcement Learning: An Introduction (2nd edition)*" - Nichita Uțiu - Romanian Institute of Science and technology
 
-Notes on Sutton and Barto's second edition of the book from 2018. These are my main takeaways from the book structured in a per-chapter basis with a main focus on the theoretical aspects. 
+Notes on Sutton and Barto's second edition of the book from 2018. These are my main takeaways from the book structured on a per-chapter basis with a main focus on the theoretical aspects. 
 
 $$
 \DeclareMathOperator*{\E}{\mathbb{E}}
@@ -14,7 +14,7 @@ $$
 
 ### (3) Finite Markov Decision Processes(MDPs)
 
-A Markov decision process is the quadruplet ($S$, $A$, $R$, $p$) where $S$, $A$, $R$ are the the *state*, *action* and *reward* spaces respectively, while p is a function of 4 arguments:
+A Markov decision process is the quadruplet ($S$, $A$, $R$, $p$) where $S$, $A$, $R$ are the *state*, *action* and *reward* spaces respectively, while p is a function of 4 arguments:
 $$
 p(s', r \mid s, a) = Pr\{S_t = s', R_t = t \mid S_{t-1} = s, A_{t-1} = a\}
 $$
@@ -78,18 +78,18 @@ $$
 
 ### (4) Dynamic Programming(DP)
 
-A lot of RL algorithms revolve around framework called **General Policy Iteration (GPI)** which involves 2 steps:
+A lot of RL algorithms revolve around a framework called **General Policy Iteration (GPI)** which involves 2 steps:
 
 1.  **Evaluation:** Taking a policy $\pi$  and estimating the value of $v_\pi$. The obtained estimate is often called $V$.
 2. **Improvement:** Given the estimate $V$, improve the policy $\pi$.
 
-If we were to write the Bellman equation for every state in $S$, we would would have a system of $|S|$ linear equations and unknowns which could be solved, however, given the size of the state space this is often inconvenient. 
+If we were to write the Bellman equation for every state in $S$, we would have a system of $|S|$ linear equations and unknowns which could be solved, however, given the size of the state space this is often inconvenient. 
 
 ---
 
 #### Iterative Policy Evaluation
 
-DP does the first  step of GPI by **sweeping through the the set of all states** and computing for each one the expected return using the Bellman equations and updating the approximate value function. **This sweeping process is repeated** until the maximum change over all the states is lower than a threshold $\theta$ (see page 75 for algorithm).
+DP does the first  step of GPI by **sweeping through the set of all states** and computing for each one the expected return using the Bellman equations and updating the approximate value function. **This sweeping process is repeated** until the maximum change over all the states is lower than a threshold $\theta$ (see page 75 for algorithm).
 
 ---
 
@@ -113,7 +113,7 @@ The two steps of GPI described before (evaluation and improvement) are therefore
 
 ---
 
-**Note:** DP methods are **proven to converge** to the optimal policy **if all states are updated an infinity of times in the limit**. As long as this condition is satisfied the states can be updated in any order. This means one **can update them asynchronously and in parallel** (see section 4.5 at page 85). 
+**Note:** DP methods are **proven to converge** to the optimal policy **if all states are updated an infinity of times in the limit**. As long as this condition is satisfied the states can be updated in any order. This means one **can update them asynchronously and in parallel** (see section 4.5 on page 85). 
 
 ---
 
@@ -125,15 +125,15 @@ However, this process can be simplified by merging estimation and improvement in
 $$
 v(s) \leftarrow \max _ a \sum _{s',r} p(s', r|s,a) \left[r + \gamma v(s') \right]
 $$
-Devising an algorithm based on this rule is straightforward. **Instead of doing 2 sweeps, we just repeatedly do this combined step** (see page 83). Although slightly different, this algorithm still fits into the GPI family, the difference being that th  e alternation takes place at a per-state level.
+Devising an algorithm based on this rule is straightforward. **Instead of doing 2 sweeps, we just repeatedly do this combined step** (see page 83). Although slightly different, this algorithm still fits into the GPI family, the difference being that the alternation takes place at a per-state level.
 
 ---
 
 ### (5) Monte Carlo (MC) methods
 
-One of the main limitations of DP algorithms is that they need full knowledge of the dynamics of the environment. MC methods relax this constraint and are part of family of **model-free methods**. We do however **consider that we only apply MC methods to episodic tasks** in this chapter.
+One of the main limitations of DP algorithms is that they need full knowledge of the dynamics of the environment. MC methods relax this constraint and are part of the family of **model-free methods**. We do however **consider that we only apply MC methods to episodic tasks** in this chapter.
 
-MC methods **revolve around sampling episodes given a policy**. The most basic evaluation algorithm (see page 92) revolves around sampling episodes (sequences of $S_0, A_0, R_1, S_1, A_1, R_2, ... S_{T-1}, A_{T-1}, R_T$) given a policy $\pi$ (possibly stochastic), and **computing the average return for each state or state-action pair**. It is often more useful to estimate Q-values rather than state values, because from Q-values we can directly infer a greedy policy.
+MC methods **revolve around sampling episodes given a policy**. The most basic evaluation algorithm (see page 92) revolves around sampling episodes (sequences of $S_0, A_0, R_1, S_1, A_1, R_2, ... S_{T-1}, A_{T-1}, R_T$) given a policy $\pi$ (possibly stochastic), and **computing the average return for each state or state-action pair**. It is often more useful to estimate Q-values rather than state values because from Q-values we can directly infer a greedy policy.
 
 Since the **estimators for the value of each state are independent** and are not a function of other estimates, **MC methods do not bootstrap by definition**.
 
@@ -154,9 +154,9 @@ One **can use MC for estimation in the GPI framework and come up with MC control
 
 #### Off-policy prediction via Importance Sampling
 
-So far the methods described have been **on-policy** methods, meaning that the the policy improved (**target policy**) and the one that decides the actions (**behavior policy**) were the same. If the 2 policies were different, the method would be called **off-policy**. 
+So far the methods described have been **on-policy** methods, meaning that the policy improved (**target policy**) and the one that decides the actions (**behavior policy**) were the same. If the 2 policies were different, the method would be called **off-policy**. 
 
-**One way to evaluate target policies wrt. a different behavior one is via Importance Sampling**.  This consists in weighting the sampled trajectory's return to compensate for the different probabilities of taking the actions wrt. to a the behavior policy as opposed to the target one:
+**One way to evaluate target policies wrt. a different behavior one is via Importance Sampling**.  This consists in weighting the sampled trajectory's return to compensate for the different probabilities of taking the actions wrt. to the behavior policy as opposed to the target one:
 $$
 \rho_{t:T-1} = \prod_{k=t}^{T-1} \dfrac{\pi(A_k|S_k)}{b(A_k|S_k)}
 $$
@@ -164,11 +164,11 @@ If we were to use the unweighted averaged returns of the values, we would be est
 $$
 \E{}_b[\rho_{t:T-1} G_t | S_t = s] = v_\pi(s)
 $$
-For simplicity's sake, **the book considers that all the sampled episodes are concatenated into a long one** and that we let $T(t)$ denote the first termination timestep after $t$ (the lowest timestep greater or equal to $t$ which is  an episode termination). Also we let $\mathcal{T} (s)$ be the set of timesteps in which $s$ was visited.  Given these notations, we can define an estimate of $v_\pi$:
+For simplicity's sake, **the book considers that all the sampled episodes are concatenated into a long one** and that we let $T(t)$ denote the first termination timestep after $t$ (the lowest timestep greater or equal to $t$ which is  an episode termination). Also, we let $\mathcal{T} (s)$ be the set of timesteps in which $s$ was visited.  Given these notations, we can define an estimate of $v_\pi$:
 $$
 V(s)\triangleq  \dfrac{\sum_{t \in \mathcal{T}(s) } \rho_{t:T(t)-1} G_t}{|\mathcal{T}(s)|}
 $$
-This is called **ordinary importance sampling**. It still has uses in more advance algorithms, but it has the disadvantage that it provides a very high variance estimate. A lower variance version called **weighted importance sampling ** exists:
+This is called **ordinary importance sampling**. It still has uses in more advanced algorithms, but it has the disadvantage that it provides a very high variance estimate. A lower variance version called **weighted importance sampling ** exists:
 $$
 V(s)\triangleq  \dfrac{\sum_{t \in \mathcal{T}(s) } \rho_{t:T(t)-1} G_t}{\sum_{t \in \mathcal{T}(s) } \rho_{t:T(t)-1}}
 $$
@@ -187,7 +187,7 @@ In order to implement off-policy MC control, we can use importance sampling in *
 
 **Note:** 
 
-* **Ordinary importance sampling has infinite variance if the sampling ratios are unbounded**, however it's an unbiased estimator! **Weighted sampling is, on the other hand, biased** but has very low variance (see figure 5.3 and example  5.5 from page 106 for a comparison).
+* **Ordinary importance sampling has infinite variance if the sampling ratios are unbounded**, however, it's an unbiased estimator! **Weighted sampling is, on the other hand, biased** but has very low variance (see figure 5.3 and example  5.5 from page 106 for a comparison).
 
 * As an implementation note, MC methods do not need to memorize rewards and states. Cumulative sums and counts can be kept instead (see page 110).
 
@@ -206,7 +206,7 @@ This kind of update is called a **TD(0) update or single-step TD update**. The t
 
 ---
 
-For batch TD and MC (updating on a series of episodes at once) MC is the **least-squares estimator** of the data whereas **TD(0) estimates the values of the maximum likelihood MDP which generates the data**.
+For batch TD and MC (updating on a series of episodes at once), MC is the **least-squares estimator** of the data whereas **TD(0) estimates the values of the maximum likelihood MDP which generates the data**.
 
 ---
 
@@ -224,7 +224,7 @@ Another key difference between MC and TD methods is that **TD methods continuall
 
 #### SARSA
 
-Sarsa is an **on-policy TD(0) control method which estimates Q-values**. Sarsa takes  2 actions using a policy, observes the states for both of them and the reward for the first (the name is actually an acronym for this sequence). The TD error is then used to learn the Q-values:
+Sarsa is an **on-policy TD(0) control method which estimates Q-values**. Sarsa takes  2 actions using a policy, observes the states for both of them, and the reward for the first (the name is actually an acronym for this sequence). The TD error is then used to learn the Q-values:
 $$
 Q(S, A) \leftarrow Q(S,A) + \alpha [R + \gamma Q(S', A') - Q(S,A)]
 $$
@@ -284,7 +284,7 @@ Given these n-step returns,  we have a new update rule for the state-value funct
 $$
 V_{t+n} (S_t) \leftarrow V_{t+n-1}(S_t) + \alpha \left[G_{t:t+n} - V_{t+n-1} (S_t) \right]
 $$
-The algorithm resulting from applying this rule is called **n-step TD** (see page 144). These methods also have the property that **the worst estimation error for the expectation wrt. state is still smaller or equal to the error of the worst state** (see page 144). Because of this guarantee, one can prove convergence of n-step TD methods.
+The algorithm resulting from applying this rule is called **n-step TD** (see page 144). These methods also have the property that **the worst estimation error for the expectation wrt. state is still smaller or equal to the error of the worst state** (see page 144). Because of this guarantee, one can prove  the convergence of n-step TD methods.
 
 The return formula can be applied to returns written wrt. the Q-value function. We can then rewrite the update rule for the Q-values as well (see page 147 for algorithm). 
 $$
@@ -313,14 +313,14 @@ $$
 
 #### Off-policy control with Importance Sampling
 
-Borrowing from MC methods, n-step Sarsa can be further adapted to off-policy control by multiplying the the TD error with the **importance sampling ratio** for both state and state-action value function
+Borrowing from MC methods, n-step Sarsa can be further adapted to off-policy control by multiplying the TD error with the **importance sampling ratio** for both state and state-action value function
 $$
 Q_{t+n} (S_t, A_t) \leftarrow Q_{t+n-1}(S_t, A_t) + \alpha \rho_{t:t+n-1} \left[G_{t:t+n} - Q_{t+n-1} (S_t, A_t) \right] \\
 \rho_{t:h} \triangleq \prod _{k=t}^{min(h, T-1)} \dfrac{\pi(A_k|S_k)}{b(A_k|S_k)}
 $$
 With this update rule, we can implement off policy **n-step off-policy control** (see page 149).
 
-**N-step off-policy Sarsa uses importance sampling** for all step **except the last one**. Thus, $\rho_{t+1:t+n}$ would be replaced by  $\rho_{t+1:t+n-1}$ and the last state would still use expectation.
+**N-step off-policy Sarsa uses importance sampling** for all steps **except for the last one**. Thus, $\rho_{t+1:t+n}$ would be replaced by  $\rho_{t+1:t+n-1}$ and, the last state would still use expectation.
 
 ---
 
@@ -344,11 +344,11 @@ For $n=1$, tree backup is equivalent to expected Sarsa.
 
 This algorithm is a **generalization of both n-step Sarsa and Tree Backup** (see diagram on page 155 for comparison diagram). At timestep $t$ of the computation, **the proportion in which we use sampling is given by the  discrete random variable $\sigma_t \in \{0, 1\} $. This variable can be any function of the timestep**.
 
-If $\sigma_t$ is 1 **then sampling is used, with the importance sampling ratio** $\rho$ for that step. **For 0, we use the expectation**. This means that in the case in which $\sigma_t = 1$, the algorithm is equivalent to Sarsa with Importance sampling and when $\sigma_t = 0$, it's equivalent to the Tree Backup algorithm (see page 156 for full algorithm).  
+If $\sigma_t$ is 1 **then sampling is used, with the importance sampling ratio** $\rho$ for that step. **For 0, we use the expectation**. This means that in the case in which $\sigma_t = 1$, the algorithm is equivalent to Sarsa with Importance sampling, and when $\sigma_t = 0$, it's equivalent to the Tree Backup algorithm (see page 156 for full algorithm).  
 
 ---
 
-**Note:** One difference is that, unlike n-step Sarsa, all intermediate steps are updated not just the first one, more similarly to how Tree Backup works. The diagram on page 155 is a pretty important one!
+**Note:** One difference is that, unlike n-step Sarsa, all intermediate steps are updated not just the first one, more similar to how Tree Backup works. The diagram on page 155 is a pretty important one!
 
 ---
 
@@ -368,11 +368,11 @@ Similarly to how MC and TD methods can be unified through the n-step framework, 
 
 **Models can be either distribution models or sampling models**. The former assumes full or learned knowledge of the MDP's dynamics $p(s', r | s,a)$. A sampling model, however,  can only generate one sample from the MDP at a time (a simulation of the environment might fall into this category). For example, DP assumes a perfect distribution model.
 
-We can consider 2 types of planning: **state-space panning** which searches through the the state space for an optimal policy and **plan-space planning which searches through the space of plans**. The latter needs some operators which transform the plans and an partial ordering relationship for them (eg. evolutionary methods) and are beyond the scope of this book.
+We can consider 2 types of planning: **state-space panning** which searches through the state space for an optimal policy and **plan-space planning which searches through the space of plans**. The latter needs some operators which transform the plans and a partial ordering relationship for them (eg. evolutionary methods) and are beyond the scope of this book.
 
 ---
 
-A simple example of planning is **a planning Q-learning version, called Q-planning**. A simple version of this algorithm involves simply selection a state action-pair  randomly and giving it to the model. and then using the reward to train using standard Q-learning.
+A simple example of planning is **a planning Q-learning version, called Q-planning**. A simple version of this algorithm involves simply selecting a state action-pair  randomly and giving it to the model. and then using the reward to train using standard Q-learning.
 
 ---
 
@@ -384,7 +384,7 @@ A simple example of planning is **a planning Q-learning version, called Q-planni
 
 With a planning agent, real data is used for both model learning and  direct reinforcement learning (improve the value function like the other methods) (see page 162, for a concise diagram of the process). The model **can improve the function through planning, this is called indirect reinforcement learning**.
 
-**Dyna-Q is a model based algorithm which does direct RL through Q-learning and learns a deterministic tabular model** (each $(S,A)$ pair has single $(S', R)$ transition). This is alternate with an **indirect RL step which updates the Q-values, by randomly sampling the model $n$ times** (if $n= 0$, it means that the agent is non-planning).
+**Dyna-Q is a model-based algorithm which does direct RL through Q-learning and learns a deterministic tabular model** (each $(S,A)$ pair has a  single $(S', R)$ transition). This is alternate with an **indirect RL step which updates the Q-values, by randomly sampling the model $n$ times** (if $n= 0$, it means that the agent is non-planning).
 
 ---
 
@@ -396,17 +396,17 @@ Dyna is shown empirically to have faster convergence on deterministic environmen
 
 **The model can be incorrect and, thus, the policy learned can thus be suboptimal**. Reasons for the model being wrong are:
 
-* Environment is stochastic and it is hard to fully learn the MDP dynamics.
+* The environment is stochastic and it is hard to fully learn the MDP dynamics.
 * The MDP is learned through function approximation and is, thus, imperfect.
 * The environment is non-stationary.
 
-**In the Dyna-Q  case we can solve the problem of non-stationarity  by rewarding exploration**. We can do this by adding to the reward of  the pair $(S,A)$ a term $k \sqrt{\tau}$ where $k$ is a small constant and  $\tau$ is the number of timesteps since the last visit of the state-action pair. We call this algorithm **Dyna-Q+** (see page 167 for comparison).
+**In the Dyna-Q case, we can solve the problem of non-stationarity  by rewarding exploration**. We can do this by adding to the reward of  the pair $(S,A)$ a term $k \sqrt{\tau}$ where $k$ is a small constant and,  $\tau$ is the number of timesteps since the last visit of the state-action pair. We call this algorithm **Dyna-Q+** (see page 167 for comparison).
 
 ---
 
 #### Prioritized sweeping
 
-Prioritized sweeping is a method based on the observation that, **using all state-action pairs from the model usually don't have a lot of states they can learn from** (this happens especially with sparse rewards). This suggest that planning **should be working backward from *goal-states*** (basically anything with a stronger reward signal).
+Prioritized sweeping is a method based on the observation that **using all state-action pairs from the model usually doesn't have a lot of states they can learn from** (this happens especially with sparse rewards). This suggests that planning **should be working backward from *goal-states*** (basically anything with a stronger reward signal).
 
 To implement prioritized sweeping we **introduce all state-action pairs $(S,A)$ whose update difference $P$ is larger than a threshold $\theta$  with $P$ as a priority into the queue**.
 $$
@@ -430,31 +430,33 @@ State-space planning can be viewed as a sequence of value updates based (or not)
 
 For each one of these functions, **one can use either sample or expected updates**. This differentiation is, however, relevant only in the case of stochastic environments. Each combination of function and update type results in a specific update rule (eg, Sarsa, Q-learning, etc) (**see  page 172 for a diagram**).
 
-Each of them vary in utility in certain situations, **for example sample update rules seem better when the branching factor is moderately large** (>100​) as expected updates would require $b$ (branching factor) computations to do an update while sample updates tend to asymptotically reach the same error reduction in less steps. Moreover sample updates, appear to be less affected by estimation errors than expected updates (diagram on page 174).
+Each of them varies in utility in certain situations, **for example, sample update rules seem better when the branching factor is moderately large** (>100​) as expected updates would require $b$ (branching factor) computations to do an update while sample updates tend to asymptotically reach the same error reduction in fewer steps. Moreover, sample updates, appear to be less affected by estimation errors than expected updates (diagram on page 174).
 
 ---
 
 #### Trajectory sampling
 
-Exhaustive sweeps, such as those performed in DP devote equal amount of time to the entirety of the state-action space. Another approach **would be to sample according to a certain distribution, such as the on-policy distribution**. Depending on the distribution (ie. if the number of visits of each step does not go to infinity in the limit), the convergence guarantee may be broken. However, it may be fine in practice.
+Exhaustive sweeps, such as those performed in DP devote an equal amount of time to the entirety of the state-action space. Another approach **would be to sample according to a certain distribution, such as the on-policy distribution**. Depending on the distribution (ie. if the number of visits of each step does not go to infinity in the limit), the convergence guarantee may be broken. However, it may be fine in practice.
 
-**Sampling based on the on-policy distribution is called trajectory sampling** and can be advantageous in terms of speed in MDPs with many states and small branching factor, but in the long run it may hurt exploration and provide diminishing improvements (see page 176 for experiment and diagram). The diminishing results are usually because more time is spent on states whose values are already learned well-enough.
+**Sampling based on the on-policy distribution is called trajectory sampling** and can be advantageous in terms of speed in MDPs with many states and small branching factor, but in the long run, it may hurt exploration and provide diminishing improvements (see page 176 for experiment and diagram). The diminishing results are usually because more time is spent on states whose values are already learned well enough.
 
 ---
 
-#### Real-time Dynamic Programming (RTDP) - NEEDS REWRITE!
+#### Real-time Dynamic Programming (RTDP) 
 
-RTDP is a variant of **asynchronous DP where the values visited are distributed according to the on-policy distribution**. Actions are selected greedily and  expected updates are applied to the current state. Any set of **arbitrary states** can be updated as well at each step (eg. limited horizon look-ahead, etc). By using expected updates, it is a form **value iteration**.
+RTDP is a variant of **asynchronous DP where the values visited are distributed according to the on-policy distribution**. Actions are selected greedily and  expected updates are applied to the current state. Any set of **arbitrary states** can be updated as well at each step (eg. limited horizon look-ahead, etc). By using expected updates, it is a form of **value iteration**.
 
 If the episode ends in the goal state, RTDP will converge to the optimal policy **over all provided relevant states** given a few simple constraints, such as all the initial values being zero.
+
+**Note:** This is a very brief presentation of the subject. See the corresponding chapter for more in-depth info.
 
 ---
 
 #### Planning at decision time
 
-The type of planing done used until now used only to **improve the estimation of value functions is called background planning**. Another type of planning, which **takes into account the current state $S_t$ and its goal is to produce a better $A_t$ is called decision-time planning**. 
+The type of planning done until now to **improve the estimation of value functions is called *background planning***. Another type of planning, which **takes into account the current state $S_t$ and its goal is to produce a better $A_t$ is called decision-time planning**. 
 
-The two types of planning are not mutually exclusive and the decision-time planning methods can store their results by updating the value functions too, but **the primary goal of decision time planning is to improve the quality of actions taken at each control step**. What this type of planning usually provides is deeper and better look-ahead than using the raw value function.
+The two types of planning are not mutually exclusive and the decision-time planning methods can store their results by updating the value functions too, but **the primary goal of decision time planning is to improve the quality of actions taken at each control step**. What this type of planning usually provides, is deeper and better look-ahead than using the raw value function.
 
 The two types can be combined, and often are, but decision time planning is often used in tasks where inference time is not a concern as the look-ahead incurs some overhead. 
 
@@ -462,17 +464,17 @@ The two types can be combined, and often are, but decision time planning is ofte
 
 #### Heuristic search
 
-Heuristic search is a popular decision-time planning method frequently used in classical AI which uses **tree expansion from the current state to look ahead and search for the best action to take**. This can be integrated into RL **through value function improvement** . What this means is the fact that through lookahead we can improve the estimate of the value function, and thus improve the policy. Unlike in traditional heuristic search, however, we can use this traversal to also do updates on the value function. 
+Heuristic search is a popular decision-time planning method frequently used in classical AI which uses **tree expansion from the current state to look ahead and search for the best action to take**. This can be integrated into RL **through value function improvement**. What this means is the fact that through look-ahead we can improve the estimate of the value function, and thus improve the policy. Unlike in traditional heuristic search, however, we can use this traversal to also do updates on the value function. 
 
-Heuristic search methods can be seen as a **generalization of single-step greedy** action selection. If lookahead has a significant enough impact (ie. either $\gamma^k$ - total discount - is very small or the episode end is reached) we can learn perfect optimal value functions at the cost of computation. This happens because **if we fully traverse the tree, we know what the true return actually is**. One-step or multi step updates can be used to actively improve the value functions during this search step. 
+Heuristic search methods can be seen as a **generalization of single-step greedy** action selection. If look-ahead has a significant enough impact (ie. either $\gamma^k$ - total discount - is very small or the episode end is reached) we can learn perfect optimal value functions at the cost of computation. This happens because **if we fully traverse the tree, we know what the true return actually is**. One-step or multi-step updates can be used to actively improve the value functions during this search step. 
 
-For tree expansion we can use a random traversal , but we are much more likely to get a better estimate if we use an on-policy distribution (see figure 8.9 on page 189 for how this may be implemented with one step updates).
+For tree expansion, we can use a random traversal, but we are much more likely to get a better estimate if we use an on-policy distribution (see figure 8.9 on page 189 for how this may be implemented with one step updates).
 
 ---
 
 #### Rollout algorithms
 
-Rollout algorithm **are decision-time planning algorithms based on MC simulated estimations starting from the current state using a fixed policy $\pi$ called rollout policy**. The average MC estimates are not used towards learning an optimal policy, but for choosing the action for the current state.
+Rollout algorithms **are decision-time planning algorithms based on MC simulated estimations starting from the current state using a fixed policy $\pi$ called rollout policy**. The average MC estimates are not used towards learning an optimal policy, but for choosing the action for the current state.
 
 The role of this is to improve the estimate $q_\pi(s,a)$ of based on these MC averages. This way, according to the *policy improvement theorem*, we know that the actions taken greedily wrt. the better estimates of the value function are at least as good as those of the policy. 
 
@@ -486,7 +488,7 @@ This can be viewed **as a single step of asynchronous value iteration **(async b
 
 #### Monte Carlo Tree Search (MCTS)
 
-MCTS is  a rollout algorithm which  stores a truncated lookahead tree to store estimates of future values. To implement a MCTS algorithm we require these 4 steps:
+MCTS is  a rollout algorithm which  stores a truncated lookahead tree to store estimates of future values. To implement an MCTS algorithm we require these 4 steps:
 
 * **A tree policy is used to traverse this memorized expanded tree of lookahead states (ie. the selection step) until a leaf node is reached**. Selecting which node to traverse to can be done using whatever method we want (eg. Upper Confidence Bound (UCB), $\varepsilon$- greedy, etc). 
 * Depending on the implementation, **when reaching a leaf node, we can expand it and memorize its children in the search tree as well (ie. the expansion step)**. When exactly we opt for expansion depends on the algorithm. Some algorithms expand when a certain threshold of visits is reached, while others decide based on the estimated value of the leaf.
@@ -495,13 +497,13 @@ MCTS is  a rollout algorithm which  stores a truncated lookahead tree to store e
 
 These 4 steps are repeated until a number of iterations is reached, or some other constraint is satisfied. The best action is then chosen wrt. the values accumulated in the tree (or to the number of visits). MCTS is ran for every new state we visit, being a decision-time planning method. **The learned tree can be discarded or we partially kept for new values**.
 
-MCTS benefits from both sample-based evaluation of policies and policy improvement (RL) for the tree. Moreover, it focuses search only on the promising states according to MC simulations.
+MCTS benefits from both sample-based evaluation of policies and policy improvement (RL) for the tree. Moreover, it focuses search only on promising states according to MC simulations.
 
 ---
 
 #### Summary of  planning methods
 
-Planning methods **require a model of the environment which may be either a distribution or a sample model**. The former can be used for expected updates, but is harder to learn than the latter. These model can be priorly known (eg. having some knowledge about the environment like in Go) or learned through experience.
+Planning methods **require a model of the environment which may be either a distribution or a sample model**. The former can be used for expected updates but it is harder to learn than the latter. These models can be priorly known (eg. having some knowledge about the environment like in Go) or learned through experience.
 
 Simulated experience generated by the model can be used to update the value functions used for our policies. **Learning and planning can be seen as the same algorithm applied to 2 different sources of experience.**
 
@@ -531,7 +533,7 @@ However, many methods, such as *n-step TD* and *heuristic searches*, lie somewhe
 
 **Another dimension which we didn't include is whether the method is on- or off- policy**. This is orthogonal to the other 2 and generally (if not always) binary (there are no methods which are kinda off-policy).
 
-Other dimensions can be added to this taxonomy. Among these are whether the method operates on continuing or episodic tasks, whether it is asynchronous, what value function it approximates and so on. **These are not exhaustive and not mutually exclusive** 
+Other dimensions can be added to this taxonomy. Among these are whether the method operates on continuing or episodic tasks, whether it is asynchronous, what value function it approximates, and so on. **These are not exhaustive and not mutually exclusive** 
 
 The remaining, and **one of the most important dimensions is whether the method is tabular or uses function approximation**. All methods presented in part I were tabular; part II will cover function approximation.
 
@@ -541,13 +543,13 @@ The remaining, and **one of the most important dimensions is whether the method 
 
 Integrating function approximation methods with RL boils down to using function approximation methods such as those used in **supervised learning** to approximate value functions. This is done so we can apply RL methods to MDPs with an **infinite number of states** where we **don't have any guarantee of convergence** to an optimal policy even in the limit of infinite data and time.
 
-However, function approximation has its own issues arising with things such as non-stationarity, bootstrapping and delayed targets.
+However, function approximation has its own issues arising with things such as non-stationarity, bootstrapping, and delayed targets.
 
 ---
 
 ### (9) On-policy prediction with approximation
 
-We consider the case of approximating the **state-value** function using a parametrized model $\hat{v}(s, w) \approx v_{\pi} (s)$ with the parameters $w \in \mathbb{R}^d$. this model can be any **parametric model** from a linear model to a ANN or a decision tree. Typically $d << |S|$ to prevent memorization. This leads to different dynamics than in the case of tabular methods such as approximate methods working better **on partially observable environments**.
+We consider the case of approximating the **state-value** function using a parameterized model $\hat{v}(s, w) \approx v_{\pi} (s)$ with the parameters $w \in \mathbb{R}^d$. this model can be any **parametric model** from a linear model to an ANN or a decision tree. Typically $d << |S|$ to prevent memorization. This leads to different dynamics than in the case of tabular methods such as approximate methods working better **on partially observable environments**.
 
 ---
 
@@ -555,7 +557,7 @@ We consider the case of approximating the **state-value** function using a param
 
 The target of updates in RL is to move the value function for some particular states to some desired values. We'll use the notation $s \mapsto u$ to indicate the value of the **value function for state $s$ should change in the direction of value $u$**.  This way MC updates can be written as $S_t \mapsto G_t$ and TD(0) ones as  $S_t \mapsto R_{t+1} + \gamma \hat{v}(S_{t+1}, w_t)$. 
 
-Each update can be seen as single training example in a *supervised learning* scenario. This means that we should use learning methods which can deal with the non-stationarity that comes from the fact that the policy $\pi$ is continually changing and thus is its value function as well.
+Each update can be seen as a single training example in a *supervised learning* scenario. This means that we should use learning methods which can deal with the non-stationarity that comes from the fact that the policy $\pi$ is continually changing and thus is its value function as well.
 
 ---
 
@@ -565,7 +567,7 @@ Unlike in tabular methods where the updates of a few states' values did not affe
 $$
 \overline{VE} (w) \triangleq  \sum_{s \in S} \mu(s) \left[ v_\pi (s) - \hat{v} (s, w) \right]^2
 $$
-We can define $\mu(s)$ as the proportion of time spent by the policy in state $s$. We call this the **on-policy distribution**. If we let $h(s)$ and $\eta(s)$ as , respectively, the probability of starting in state $s$  and the average number of timesteps spent in state $s$ per episode. We then get the following linear system:
+We can define $\mu(s)$ as the proportion of time spent by the policy in state $s$. We call this the **on-policy distribution**. If we let $h(s)$ and $\eta(s)$ as, respectively, the probability of starting in state $s$  and the average number of timesteps spent in state $s$ per episode. We then get the following linear system:
 $$
 \eta(s) = h(s) + \sum_{\bar{s} \in S} \eta(\bar{s}) \sum_{a \in A(\bar{s})} \pi (a | \bar{s}) p (s | \bar{s}, a), \forall s \in S
 $$
@@ -579,18 +581,18 @@ It is not yet clear that $\overline{VE}$ is the best objective to optimize to ge
 
 #### Stochastic-gradient and semi-gradient methods
 
-To optimize $\overline{VE}$, we apply the classical SGD algorithm on pour approximating function $f$. Therefore we get the following update rule for the weights $w_t$:
+To optimize $\overline{VE}$, we apply the classical SGD algorithm on our approximating function $f$. Therefore we get the following update rule for the weights $w_t$:
 $$
 \begin{align}
 w_{t+1} \leftarrow &  w_t - \dfrac{1}{2} \alpha \nabla \left[ v_\pi(S_t) - \hat{v}(S_t, w_t) \right] \\
 = & w_t + \alpha \left[ v_\pi(S_t) - \hat{v}(S_t, w_t)\right] \nabla \hat{v} (S_t, w_t)
 \end{align}
 $$
-Here $\nabla\hat{v}(S_t, w_t)$ stands for the gradient of $\hat{v}$ wrt. the components of $w$. Although, ideally, we would want to perform the update in the direction of $S_t \mapsto v_\pi (S_t)$ we do not have the real value and instead we will use a **noisy estimate** we call $U_t$. If $U_t$ is unbiased, it will be equal to $v_\pi (S_t)$ in expectation. If we only use observed examples for updating then we guarantee that **we are using the the on-policy distribution.**
+Here $\nabla\hat{v}(S_t, w_t)$ stands for the gradient of $\hat{v}$ wrt. the components of $w$. Although ideally, we would want to perform the update in the direction of $S_t \mapsto v_\pi (S_t)$ we do not have the real value and instead, we will use a **noisy estimate** we call $U_t$. If $U_t$ is unbiased, it will be equal to $v_\pi (S_t)$ in expectation. If we only use observed examples for updating then we guarantee that **we are using the on-policy distribution.**
 
 This is basically the **vanilla SGD** algorithm if the estimate is unbiased and independent of $w_t$. Therefore, we can use MC estimates - which are unbiased - as the targets of the update and the convergence is guaranteed (see page 202).
 
-By bootstrapping, however, we do not have the same guarantee. For example, using the TD(0) target $U_t = R_{t+1} + \gamma \hat{v}(S_{t+1}, w_t)$, our estimate depends on the current values of $w_t$ and a true gradient method would have to recursively compute the gradient. We do not do this, and instead use the gradient for just the current values. This is called a **half-gradient** method and although it has weaker convergence guarantees, it can be used for **online and gradual** learning.
+By bootstrapping, however, we do not have the same guarantee. For example, using the TD(0) target $U_t = R_{t+1} + \gamma \hat{v}(S_{t+1}, w_t)$, our estimate depends on the current values of $w_t$ and a true gradient method would have to recursively compute the gradient. We do not do this, and instead, use the gradient for just the current values. This is called a **half-gradient** method and although it has weaker convergence guarantees, it can be used for **online and gradual** learning.
 
 A variant of SGD used is **state aggregation** where multiple states $S_t$ are grouped and a single component of the weight vector $w_k$ is updated (its gradient is considered 1, while the others' are 0). This basically simplifies the problem **through discretization**.
 
@@ -606,11 +608,11 @@ The gradient of the value function wrt. $w$ is $\nabla \hat{v} (s,w) = x(s)$ and
 $$
 w_{t+1} \leftarrow W_t + \alpha \left[ U_t - \hat{v} (s_t, w_t)\right] x (S_t)
 $$
-For this model, **the MC algorithm has a convergence guarantee to the global optimum**. The **semi-gradient TD(0)** (where $U_t$ is the bootstrapped approximation) has too a guarantee of convergence in the linear case, not to the global minimum, but rather to a point near it.  It can be shown that the semi-gradient method converges to a point called the **TD fixed point** which is within a bounded expansion of the global minimum:
+For this model, **the MC algorithm has a convergence guarantee to the global optimum**. The **semi-gradient TD(0)** (where $U_t$ is the bootstrapped approximation), too, has a guarantee of convergence in the linear case, not to the global minimum, but rather to a point near it.  It can be shown that the semi-gradient method converges to a point called the **TD fixed point** which is within a bounded expansion of the global minimum:
 $$
 \overline{VE}(w_{TD}) \leq \dfrac{1}{1- \gamma} \min_w \overline{VE} (w)
 $$
-This result, as other convergence guarantees is based on weighting according to the on-policy distribution.
+This result, as other convergence guarantees, is based on weighting according to the on-policy distribution.
 
 ---
 
@@ -622,7 +624,7 @@ This result, as other convergence guarantees is based on weighting according to 
 
 Non-linear transformations and dependencies between features are not captured by linear models. We can use different basis functions to capture these.
 
-One example of candidate features is **polynomial** features, were every component of the $x$ vector given a state $s \in \mathbb{R}^k$, where $c_{i,j} \in \{i\}_0^n$, has the form:
+One example of candidate features are **polynomial** features, where every component of the $x$ vector, given a state $s \in \mathbb{R}^k$, where $c_{i,j} \in \{i\}_0^n$, has the form:
 $$
 x_i(s) = \prod^k_{j=1} s_j^{c_{i,j}}
 $$
@@ -639,11 +641,11 @@ $$
 
 ---
 
-Another possibility is the use of **coarse coding** where each state is mapped to a binary vector. Each component of this vector corresponds to whether the states is within a **receptive field**.  A receptive field can be any contiguous set of points in the state space, but usually they are **repeating and overlapping tiles or circles**.
+Another possibility is the use of **coarse coding** where each state is mapped to a binary vector. Each component of this vector corresponds to whether the states is within a **receptive field**.  A receptive field can be any contiguous set of points in the state space, but, usually, they are **repeating and overlapping tiles or circles**.
 
-Tiling is the simpler and overall more feasible alternative. State aggregation is a particular case of coarse coding where a single such tiling is used. Also asymmetrical offsets for the tiles are often preferred as uniform ones (see Fig 9.11 on page 219).
+Tiling is the simpler and overall more feasible alternative. State aggregation is a particular case of coarse coding where a single such tiling is used. Also, asymmetrical offsets for the tiles are often preferred to uniform ones (see Fig 9.11 on page 219).
 
-**Hashing** can be use to reduce a high number of tiles to a manageable number. Hashing is, however, non-injective and assigns multiple tiles to the same bin, effectively creating larger, even non-contiguous, tiles.
+**Hashing** can be used to reduce a high number of tiles to a manageable number. Hashing is, however, non-injective and assigns multiple tiles to the same bin, effectively creating larger, even non-contiguous, tiles.
 
 ---
 
@@ -657,7 +659,7 @@ These are differentiable and, thus, learnable. The centers and variances can be 
 
 #### Nonlinear function approximation with ANNs
 
-ANNs can be used together with reinforcement learning methods in several ways. For example, they can be trained to approximate a value function **given the TD error**, maximize expected reward like a **gradient bandit** or through **policy-gradient** methods.
+ANNs can be used together with reinforcement learning methods in several ways. For example, they can be trained to approximate a value function **given the TD error**, maximize expected reward like a **gradient bandit**, or through **policy-gradient** methods.
 
 All of the methods of improving training and generalization in ANNs can be applied to  ANNs in RL as well.
 
@@ -665,11 +667,11 @@ All of the methods of improving training and generalization in ANNs can be appli
 
 #### Least-Squares TD
 
-When using linear functions, we used an iterative gradient-based method to get the **TD fixed point** which is close to the rel minimum $w_{TD} = A^{-1} b$. However since $A$ and $b$ are the expectations of $x_t(x_t - \gamma x_{t+1})^T$ and $R_{t+1}x_t$, we can compute then as an average for all $x$ and $R$ values and use these estimates $\widehat{A_t}$ and $\widehat{b_t}$ (see page 228) and compute the closed form value of $w_{TD}$. 
+When using linear functions, we used an iterative gradient-based method to get the **TD fixed point** which is close to the real minimum $w_{TD} = A^{-1} b$. However, since $A$ and $b$ are the expectations of $x_t(x_t - \gamma x_{t+1})^T$ and $R_{t+1}x_t$, we can compute then as an average for all $x$ and $R$ values and use these estimates $\widehat{A_t}$ and $\widehat{b_t}$ (see page 228) and compute the closed-form value of $w_{TD}$. 
 $$
 w_t \triangleq \widehat{A_t}^{-1}\widehat{b_t}
 $$
-This is called **Limited-Sqares TD (LSTD)**.  Although it uses the closed form and therefore a fixed number of computations, however, this number can be large mainly due to the inverse. Another  small advantage is the lack of a step-size hyperparameter. Also, this means that it cannot be applied online and there is not practical for non-stationary environments.
+This is called **Limited-Squares TD (LSTD)**.  Although it uses the closed-form and therefore a fixed number of computations, however, this number can be large mainly due to the inverse. Another  small advantage is the lack of a step-size hyperparameter. Also, this means that it cannot be applied online and it is not practical for non-stationary environments.
 
 ---
 
@@ -681,11 +683,11 @@ These are a form of **non-parametric** models which do **lazy learning.**  They 
 
 #### Kernel-based function approximation
 
-Kernel based methods are  methods based on a **generalization strength** metric, $k: \mathcal{S} \times \mathcal{S} \mapsto \mathbb{R}$ between some reference state and a query state. One simple way of approximation is using a set $\mathcal{D}$ of memorized states and a function $g: \mathcal{S} \mapsto \mathbb{R}$ mapping to their memorized values. Then we can use the average weighted by this metric as an approximation for the value of state $s$. This is called **kernel regression**. One of the most commonly used function for kernels is the RBF.
+Kernel-based methods are  methods based on a **generalization strength** metric, $k: \mathcal{S} \times \mathcal{S} \mapsto \mathbb{R}$ between some reference state and a query state. One simple way of approximation is using a set $\mathcal{D}$ of memorized states and a function $g: \mathcal{S} \mapsto \mathbb{R}$ mapping to their memorized values. Then we can use the average weighted by this metric as an approximation for the value of state $s$. This is called **kernel regression**. One of the most commonly used functions for kernels is the RBF.
 $$
 \hat{v}(s, \mathcal{D}) = \sum _{s' \in \mathcal{d}}k(s, s')g(s')
 $$
-Any linear parametric regression can be used as a kernel regression if $k$ is defined as the inner product of the feature vectors. However not all kernel functions can be written like this. This is the basis of the so-called **kernel trick**.
+Any linear parametric regression can be used as a kernel regression if $k$ is defined as the inner product of the feature vectors. However, not all kernel functions can be written like this. This is the basis of the so-called **kernel trick**.
 $$
 k(s, s') = x(s)^T x(s')
 $$
@@ -722,7 +724,7 @@ Using gradient methods with non-linear models such as ANNs has become popular in
 
 ### (10) On-policy control with approximation
 
-For on-policy control we study **function approximation Sarsa**. Extension is simple in the case of episodic tasks, but has to be reevaluated in the case of continuing ones. Doing so, we also start using **state-action values** instead of state values.
+For on-policy control, we study **function approximation Sarsa**. The extension is simple in the case of episodic tasks but has to be reevaluated in the case of continuing ones. Doing so, we also start using **state-action values** instead of state values.
 
 ---
 
@@ -736,7 +738,7 @@ If we replace $U_t$ with the discounted return of one-step Sarsa we get:
 $$
 w_{t+1} \leftarrow w_t + \alpha \left[ R_{t+1} + \gamma \hat{q}(S_t, A_t, w_t) - \hat{q}(S_t, A_t, w_t)  \right] \nabla \hat{q}(S_t, A_t, w_t)
 $$
-Being Sarsa, and therefore to guarantee converge we have to only consider **soft policies** such as **$\varepsilon$-greedy**. **Optimistic initial estimates** can also be used for exploration. (full algorithm on page 244).
+This method being Sarsa, to guarantee convergence we have to only consider **soft policies** such as **$\varepsilon$-greedy**. **Optimistic initial estimates** can also be used for exploration. (full algorithm on page 244).
 
 ---
 
@@ -752,7 +754,7 @@ Similarly, we can also obtain a function-approximation version **of expected Sar
 
 Average reward is another formulation for return values, which, unlike the previous ones, has **no discounting**. The discounting setting is difficult with function approximation **in the continuing setting** and  average-reward is better suited.
 
-For a certain policy, we can therefore compute the average expected reward in the limit to infinity steps:
+For a certain policy, we can, therefore, compute the average expected reward in the limit to infinity steps:
 $$
 r(\pi) \triangleq \lim_{h \to \infty} \dfrac{1}{h}\mathbb{E} \left[ R_t | S_0, A_{0:t-1} \sim \pi \right] = \sum _s \mu _\pi (s) \sum _a \pi (a|s) \sum _{s', r} p (s', r| s,a) r
 $$
@@ -760,11 +762,11 @@ Here $\mu_\pi (s)$ stands for the **steady-state distribution** and is equal to 
 $$
 \sum_s \mu_\pi (s) \sum _{s', r}\pi(a|s) p (s', r| s,a) = \mu_\pi (s')
 $$
-For this distribution to exist, we must assume an **ergodic **MDP, meaning that the probability of getting to a state in the long run is not conditioned by the starting state. We can then define a **differential** version of returns so that our values are bounded(?)
+For this distribution to exist, we must assume an **ergodic **MDP, meaning that the probability of getting to a state, in the long run, is not conditioned by the starting state. We can then define a **differential** version of returns so that our values are bounded(?)
 $$
 G_t \triangleq \sum_{i=1}^\infty R_{t+i} - r(\pi)
 $$
-Based on these *differential returns* we can define differential version of the Bellman equations and subsequently of the TD error by keeping an estimate of the average reward $r(t)$ through $\bar{R}_t$.
+Based on these *differential returns* we can define the differential versions of the Bellman equations and subsequently of the TD error, by keeping an estimate of the average reward $r(t)$ through $\bar{R}_t$.
 $$
 \delta_t \triangleq R_{t+1} - \bar{R}_t + \hat{q} (S_{t+1}, A_{t+1}, w_t) - \hat{q} (S_t, A_t, w_t) \\
 \delta_t \triangleq R_{t+1} - \bar{R}_t + \hat{v} (S_{t+1}, w_t) - \hat{v} (S_t, w_t)
@@ -773,7 +775,7 @@ Because they are given in terms of differential returns, they are bounded and we
 $$
 w_{t+1} \leftarrow w_t + \alpha \delta_t \nabla \hat{q} (s_t, A_t, w_t) 
 $$
-During training we need to simultaneously **keep an average of the the rewards**. A full algorithm is presented on page 251.
+During training, we need to simultaneously **keep an average of the rewards**. A full algorithm is presented on page 251.
 
 ---
 
@@ -781,7 +783,7 @@ During training we need to simultaneously **keep an average of the the rewards**
 
 **In the continuing formulation**, under the assumption of **ergodicity of the MDP**, for the function approximation methods, the discount is redundant in the computation of returns. 
 
-Ergodicity, like in the case of differential returns, ensure that an average reward can be compute in the limit to infinity. Under this assumption we can show that the average reward when using discounts **is proportional** to one without discounting as its value is $r(\pi) /(1-\gamma)$.  This renders the discounting factor $\gamma$ useless (a full proof is available on page 254).
+Ergodicity, like in the case of differential returns, ensures that an average reward can be computed in the limit to infinity. Under this assumption, we can show that the average reward when using discounts **is proportional** to one without discounting as its value is $r(\pi) /(1-\gamma)$.  This renders the discounting factor $\gamma$ useless (a full proof is available on page 254).
 
 The authors claim this stems from **the lack of a policy improvement theorem** for the function approximation case, where improvement in one state may not necessarily mean improvement of the policy. (how does this translate to episodic tasks?)
 
@@ -789,7 +791,7 @@ The authors claim this stems from **the lack of a policy improvement theorem** f
 
 #### Differential semi-gradient n-step Sarsa
 
-This is basically the average reward formulation of the n-step Sarsa algorithm. The main difference is that at timestep $t+n$, **the return is define in terms of differential** rewards instead of discounted ones.
+This is basically the average reward formulation of the n-step Sarsa algorithm. The main difference is that at timestep $t+n$, **the return is defined in terms of differential** rewards instead of discounted ones.
 $$
 G_{t:t+n} \triangleq (\sum_{i=1}^n  R_{t+i} - \bar{R}_{t+n-1}) + \hat{q}(S_{t+n}, A_{t+n}, w_{t+n-1})
 $$
@@ -803,13 +805,13 @@ Using this TD error, the algorithm is the same as normal Sarsa, with the additio
 
 #### Summary
 
-In this chapter we saw adaptations of the Sarsa algorithm to function approximation cases. Due to the use of semi-gradient methods, we had to use **average rewards $r(\pi)$ for the continuing case** to ensure they converged. This variant of Sarsa was called **differential Sarsa** which **made the discounting coefficient redundant**.
+In this chapter, we saw adaptations of the Sarsa algorithm to function approximation cases. Due to the use of semi-gradient methods, we had to use **average rewards $r(\pi)$ for the continuing case** to ensure they converged. This variant of Sarsa was called **differential Sarsa** which **made the discounting coefficient redundant**.
 
 ---
 
 ### (11) Off-policy methods with approximation
 
-This chapter deals with the extension of off-policy methods to function approximation. The challenges are partially the same as those for tabular off-policy methods, but here, the on-policy distribution has a much greater role in **guaranteeing converge of semi-gradient methods**.
+This chapter deals with the extension of off-policy methods to function approximation. The challenges are partially the same as those for tabular off-policy methods, but here, the on-policy distribution has a much greater role in **guaranteeing convergence of semi-gradient methods**.
 
 #### Semi-gradient methods
 
@@ -837,9 +839,9 @@ $$
 
 Due to the interdependence of states in the approximation of value functions (ie. modifying the estimation for one state modifies it for all of them) **off-policy methods can diverge**.
 
-As the example on page 260 shows, this happens in the off-policy case and not the on-policy one because over/under-estimations of the value functions may never be corrected. Because the actions are not take and updated on-policy the importance sampling ratio $\rho_t$  **is often less then 1 and sometimes even 0 in the off-policy case**. This leads to the initial error **never being corrected**.
+As the example on page 260 shows, this happens in the off-policy case and not the on-policy one because over-/under-estimations of the value functions may never be corrected. Because the actions are not taken and updated on-policy the importance sampling ratio $\rho_t$  **is often less than 1 and sometimes even 0 in the off-policy case**. This leads to the initial error **never being corrected**.
 
-The paper presents n pages 261 and  263 two examples in which even using expected and/or synchronous updates leads to divergence. **Baird's example** even diverges for Q-learning. Q-learning does seem to always converge when given a policy which is close **to the target greedy one**, although there is no theoretical proof of this.
+The paper presents on pages 261 and  263 two examples in which even using expected and/or synchronous updates leads to divergence. **Baird's example** even diverges for Q-learning. Q-learning does seem to always converge when given a policy which is close **to the target greedy one**, although there is no theoretical proof of this.
 
 Some specific function approximation methods can be used which do not extrapolate to unobserved targets. This guarantee **does not apply** to popular ones such as ANNs and linear models with tile coding.
 
@@ -847,11 +849,11 @@ Some specific function approximation methods can be used which do not extrapolat
 
 #### The deadly triad
 
-The cause of instability and divergence in RL is not a single factor, but a combination of **function approximation**, **bootstrapping** and **off-policy training**. These, as shown in the previous section, lead to divergence. We look at pros of each of the causes individually.
+The cause of instability and divergence in RL is not a single factor, but a combination of **function approximation**, **bootstrapping**, and **off-policy training**. These, as shown in the previous section, lead to divergence. We look at the pros of each of the causes individually.
 
-* **Function approximation**, for example is the only way to deal with arbitrarily large MDPs and states. This was not possible with tabular methods, and, thus, we can not give it up.
+* **Function approximation**, for example, is the only way to deal with arbitrarily large MDPs and states. This was not possible with tabular methods, and, thus, we can not give it up.
 
-* **Bootstrapping** is not necessarily required, as we could use non-TD learning such as MC methods. However, MC has large memory requirements, and **more often than not TD learns much faster than MC** on task where states repeat (most tasks). To make TD more like MC, the stochasticity of updates can be diminished by using n-step TD, but sometimes it leads to decreased performance. Overall bootstrapping is greatly beneficial.
+* **Bootstrapping** is not necessarily required, as we could use non-TD learning such as MC methods. However, MC has large memory requirements, and **more often than not TD learns much faster than MC** on tasks where states repeat (most tasks). To make TD more like MC, the stochasticity of updates can be diminished by using n-step TD, but sometimes it leads to decreased performance. Overall bootstrapping is greatly beneficial.
 
 * **Off-policy learning** may seem the least indispensable one as good on-policy methods such as Sarsa do exist. However, off-policy learning **encourages exploration** more and **has strong behavioral motivations** as it allows parallel learning of multiple target policies using only one behavior one.  
 
@@ -882,7 +884,7 @@ We can see that this error is actually the **expectation of the TD error**.  $\b
 $$
 \overline{BE} (w) = ||\bar{\delta}_w||^2_\mu
 $$
-$\overline{BE}$ usually can not be minimized to zero, but for the linear approximation case there is value for which it is minimal and in general **it is different** from the minimal  $\overline{VE}$ point $\Pi v_\pi$. To update iteratively the value vector using the Bellman equation, we have the **Bellman operator** defined by
+$\overline{BE}$ usually can not be minimized to zero, but for the linear approximation case there is value for which it is minimal and, in general, **it is different** from the minimal  $\overline{VE}$ point $\Pi v_\pi$. To update iteratively the value vector using the Bellman equation, we have the **Bellman operator** defined by
 $$
 (B_\pi v)(s) \triangleq \sum_a \pi (a|s) \sum_{s', r} p(s', r|s,a) \left[r+ \gamma v_\pi(s') \right]
 $$
@@ -896,7 +898,7 @@ A figure of all these points and operators can be found on page 267.
 
 #### Gradient descent in the Bellman error
 
-Until now, for TD, unlike for MC, we only had semi-gradient methods to work with in the function approximation case. Because they are not **true gradient** methods, SGD does not offer its normal convergence guarantees.
+Until now, for TD, unlike for MC, we only had semi-gradient methods to work with the function approximation case. Because they are not **true gradient** methods, SGD does not offer its normal convergence guarantees.
 
 One way would be to use the TD error directly 
 $$
@@ -908,7 +910,7 @@ $$
 $$
 By minimizing this with SGD, we are applying what we call the **naive residual-gradient algorithm**. This converges robustly to its minimum, but as the example on page 271 shows, it is sometimes far from the true values.
 
-As an alternative we can try and **minimize the Bellman error** $\overline{BE}$. The point of zero Bellman error is, of course, the point of the real value function, so in the approximating case we should, at least, get close to it (see eq. on page 272).
+As an alternative, we can try and **minimize the Bellman error** $\overline{BE}$. The point of zero Bellman error is, of course, the point of the real value function, so in the approximating case we should, at least, get close to it (see eq. on page 272).
 
 One disadvantage of this minimization is that it is the product of 2 expectations so **we need to sample the environment twice from the same state** (usually not possible) and in the approximating case values **still diverge** (see page 273).
 
@@ -922,7 +924,7 @@ One disadvantage of this minimization is that it is the product of 2 expectation
 
 For the RL context, the authors consider that something is  ***learnable*** if it can be learned *at all* from an infinite sample of experience data. It turns out that 2 different MDPs can generate identical data distributions, thus **unless we have access to their dynamics**, we cannot learn them. 
 
-This means that neither the $\overline{VE}$ nor the $\overline{BE}$ objective are directly learnable (see pages 274-276). We can introduce a MC-based  objective called the *mean square return error* which is learnable:
+This means that neither the $\overline{VE}$, nor the $\overline{BE}$ objective, is directly learnable (see pages 274-276). We can introduce an MC-based  objective called the *mean square return error* which is learnable:
 $$
 \overline{RE} (w) = \mathbb{E} \left[ G_t - \hat{v} (S_t, w) \right] = \overline{VE} (W) + \mathbb{E} \left[ (G_t - v_\pi (S_t))^2\right]
 $$
@@ -930,7 +932,7 @@ Because $\overline{RE}(w)$ and $\overline{VE}(w)$  differ only through a varianc
 
 However, for $\overline{BE}$ we can find counterexamples in which MDPs generating the same data distribution **actually have different optima** (page 276). This makes  $\overline{BE}$ ill-suited as an optimization objective. 
 
-We could only use the residual-gradient algorithm with $\overline{BE}$ in situations where we **could double sample** for a state. Therefor, this **restricts it to model-based** methods where we have knowledge of the MDPs transitions.
+We could only use the residual-gradient algorithm with $\overline{BE}$ in situations where we **could double sample** for a state. Therefore, this **restricts it to model-based** methods where we have knowledge of the MDPs transitions.
 
 ---
 
@@ -965,13 +967,13 @@ Both these algorithms involve 2 learning processes, one for $v$ and one for $w$ 
 
 Emphatic-TD considers the discounting coefficient $\gamma$ as the probability of continuing of an episode. Therefore $1-\gamma$ becomes the probability that the episode will terminate and **restart from the state we transitioned to**. This is called **pseudo termination**.
 
-An example algorithm can be seen on page 282. It is a variation on the interest and emphasis algorithm from chapter 9. Although stable in theory, **it has very high variance** and, therefore, rarely converges on Baird's counterexample.
+An example algorithm can be seen on page 282. It is a variation of the interest and emphasis algorithm from chapter 9. Although stable in theory, **it has very high variance** and, therefore, rarely converges on Baird's counterexample.
 
 ---
 
 #### Reducing variance
 
-Due to the space of policies being very large, many behavior policies may be vastly different from the the target one. This can lead to **very high variance in the importance ratios** despite having bounded expectations.
+Due to the space of policies being very large, many behavior policies may be vastly different from the target one. This can lead to a **very high variance in the importance ratios** despite having bounded expectations.
 
 Because of this, SGD tends to diverge unless small step-sizes are used. This can be mitigated through things such as: backup tree methods, having similar target and behavior policies, weighted importance sampling, etc.
 
@@ -979,21 +981,21 @@ Because of this, SGD tends to diverge unless small step-sizes are used. This can
 
 #### Summary
 
-This chapter summarized how off-policy learning cannot be easily translated to framework of function approximation. It showed that **bootstrapping methods coupled with function approximation** are not stable in a off-policy setup, an effect called by the authors **the deadly triad**.
+This chapter summarized how off-policy learning cannot be easily translated to the framework of function approximation. It showed that **bootstrapping methods coupled with function approximation** are not stable in an off-policy setup, an effect called by the authors **the deadly triad**.
 
-Using alternative objectives such as the **Bellman error** are appealing because they can allow stable SGD optimizations. This error however was shown to not be learnable, but an alternative **projected Bellman error** can be used at the cost of slightly higher computational complexity.
+Using alternative objectives such as the **Bellman error** are appealing because they can allow stable SGD optimizations. This error, however, was shown to not be learnable, but an alternative **projected Bellman error** can be used at the cost of slightly higher computational complexity.
 
 Off-policy learning in the domain of function approximation is still unsolved, but promises of better exploration and parallel learning of multiple policies make it appealing.
 
 ---
 
-**Note:** In literature the *Bellman operator* is more commonly denoted $T^\pi$ and is called the *dynamic programming operator*.
+**Note:** In literature, the *Bellman operator* is more commonly denoted $T^\pi$ and is called the *dynamic programming operator*.
 
 ---
 
 ### (12) Eligibility traces
 
-Eligibility traces are a method of **unifying TD methods and MC**. For example TD($\lambda$) refers to the use of an eligibility trace where we have TD(0) at one end ($\lambda = 0$) and MC at the other ($\lambda = 1$). N-step and MC methods employ what are called *forward views*. This mechanism can be, even entirely, achieved through eligibility traces.
+Eligibility traces are a method of **unifying TD methods and MC**. For example,  TD($\lambda$) refers to the use of an eligibility trace where we have TD(0) at one end ($\lambda = 0$) and MC at the other ($\lambda = 1$). N-step and MC methods employ what are called *forward views*. This mechanism can be, even entirely, achieved through eligibility traces.
 
 The mechanism introduces a short term memory vector $z_t \in \mathbb{R}^d$ whose components mirror those of the weights. Each one is bumped when the component participates in prediction and slowly decays. Its value dictates how fast that component learns.
 
@@ -1034,7 +1036,7 @@ One caveat is that TD($\lambda$) is much more sensitive to larger step-sizes tha
 
 #### Implementation Issues
 
-Eligibility traces pose a complexity increase e**specially when using the tabular setting**, where the weight vector would be the size of the MDP. However, in the case of function approximation, the implementation usually incurs **just double the memory**. N-step versions of the $\lambda$-return methods also add a memory requirement and computational overhead. 
+Eligibility traces pose a complexity increase, **especially when using the tabular setting**, where the weight vector would be the size of the MDP. However, in the case of function approximation, the implementation usually incurs **just double the memory**. N-step versions of the $\lambda$-return methods also add a memory requirement and computational overhead. 
 
 ---
 
@@ -1046,7 +1048,7 @@ Through **backward view online methods,** one can emulate the forward view $\lam
 
 Good values of $\lambda$ usually  lie farther away from the MC-like end of $\lambda = 1$, as there, a sharp performance decrease can be noticed. There is **no clear theory on the selection of this hyperparameter**.
 
-The main advantage is data efficiency at higher computational cost. This may be useful in the case of online and especially real world environments, but might **break even when simulation and data gathering are inexpensive**.
+The main advantage is data efficiency at a higher computational cost. This may be useful in the case of online and especially real-world environments but might **break even when simulation and data gathering are inexpensive**.
 
 ---
 
@@ -1063,7 +1065,7 @@ $$
 $$
 Through these methods, we also have a simple way of dealing with **continuous action spaces**. In situations of partial observation (or imperfect function approximation), approximate policy methods can also **learn stochastic policies** (see page 323 for example).
 
-Sometimes directly optimizing the policy **may be easier** than learning the value functions and facilitates design of policy parametrization.
+Sometimes directly optimizing the policy **may be easier** than learning the value functions and facilitates the design of policy parametrization.
 
 ---
 
@@ -1073,7 +1075,7 @@ Another advantage of  approximate policy methods is that action probabilities **
 $$
 J(\theta) \triangleq v_{\pi_\theta}(s_0)
 $$
-Here $v_{\pi_\theta}$ is the true value function of $\pi_\theta$ and we assume no discounting (ie. $\gamma = 1$). Initially, it seems like the the performance depends on both action selection and the distribution of states, however the **policy gradient theorem** shows that $\nabla J(\theta)$ does not need this distribution.
+Here $v_{\pi_\theta}$ is the true value function of $\pi_\theta$ and we assume no discounting (ie. $\gamma = 1$). Initially, it seems like the performance depends on both action selection and the distribution of states, however, the **policy gradient theorem** shows that $\nabla J(\theta)$ does not need this distribution.
 $$
 \nabla J(\theta) \propto \sum _S \mu (s) \sum_a q_\pi (s,a) \nabla \pi (a | s, \theta)
 $$
@@ -1091,11 +1093,11 @@ We can then further modify the value so that we compute it wrt. to the return of
 $$
 \nabla J(\theta) \propto \mathbb{E}_\pi \left[ \sum_a q_\pi (S_t, a) \nabla \pi (a|S_t, \theta) \right] = \mathbb{E}_\pi \left[ G_t \frac{\nabla \pi (A_t| S_t, \theta)}{\pi(A_t| S_t, \theta)} \right]
 $$
-It is easy to see how this can be used **as a MC algorithm** with the following update rule (logarithm is used for compactness):
+It is easy to see how this can be used **as an MC algorithm** with the following update rule (logarithm is used for compactness):
 $$
 \theta_{t+1} \leftarrow \theta_t + \alpha G_t \frac{\nabla \pi (A_t| S_t, \theta)}{\pi(A_t| S_t, \theta)} = \theta_t + \alpha G_t \nabla \ln \pi (A_t| S_t, \theta)
 $$
-Because it is a MC method, it is well defined only for episodic tasks. An algorithm that takes discounting into consideration can be seen on page 328. Although it has strong convergence guarantees, being MC, **it has high variance** and is thus sensible to step size
+Because it is an MC method, it is well defined only for episodic tasks. An algorithm that takes discounting into consideration can be seen on page 328. Although it has strong convergence guarantees, being MC, **it has high variance** and is thus sensible to step size
 
 ---
 
@@ -1105,9 +1107,9 @@ Reinforce can be generalized to include a baseline state value function:
 $$
 \nabla J(\theta) \propto \sum _S \mu (s) \sum_a (q_\pi (s,a) -b(s)) \nabla \pi (a | s, \theta)
 $$
-This work because the subtracted value $\sum_a b(s) \nabla \pi (a | s, \theta)$ is actually 0. Therefore, for each update, we can can subtract the baseline from the return ($G_t - b(S_t)$) . This baseline can be, for example, an **approximator of the state value function** which we train using the same MC trials.
+This work because the subtracted value $\sum_a b(s) \nabla \pi (a | s, \theta)$ is actually 0. Therefore, for each update, we can subtract the baseline from the return ($G_t - b(S_t)$). This baseline can be, for example, an **approximator of the state value function** which we train using the same MC trials.
 
-This has the same convergence guarantees, but with well selected step sizes ($\alpha^\theta$ and $\alpha^w$) **we can greatly reduce the variance** and speed up learning of the policy. See page 330 for a full algorithm.
+This has the same convergence guarantees, but with well-selected step sizes ($\alpha^\theta$ and $\alpha^w$) **we can greatly reduce the variance** and speed up learning of the policy. See page 330 for a full algorithm.
 
 ---
 
@@ -1134,7 +1136,7 @@ The algorithm arising can be seen on page 333 and only requires us to keep a run
 
 #### Policy parametrization for continuous actions
 
-Parameterizing policies to account for continuous actions amount to simply changing the distribution they output. Instead of using a softmax distribution with parameterized preferences we can instead **parameterize the mean and variance of a normal distribution**.
+Parameterizing policies to account for continuous actions amount to simply changing the distribution they output. Instead of using a softmax distribution with parameterized preferences, we can instead **parameterize the mean and variance of a normal distribution**.
 $$
 \pi(a|s, \theta) \triangleq \frac{1}{\sigma(s, \theta) \sqrt{2\pi}} \exp \left(-\frac{(a - \mu(s, \theta))^2}{2 \sigma (s, \theta) ^2}\right)
 $$
@@ -1162,13 +1164,13 @@ In Mnih et al. 2015, the authors use DQN to play various Atari games with very g
 
 To do this, the authors tested several models and methods against each other and reached a set of improvements to DQN which led to the greatest performance increases:
 
-First, to reduce memory, **4 frames** are fed to the model at once and actions are taken every 4 timesteps. This can also be seen as way of *reducing partial observability* and making the process more Markovian.
+First, to reduce memory, **4 frames** are fed to the model at once and actions are taken every 4 timesteps. This can also be seen as a way of *reducing partial observability* and making the process *more Markovian.*
 
-Then as implemented by other papers before, the authors do not sequentially feed the experiences ($S_t$, $A_t$, $R_t$, $S_{t+1}$), but rather, store then in a buffer and select them randomly for training. This is called **experience replay** and was introduced by Lin 1994.
+Then as implemented by other papers before, the authors do not sequentially feed the experiences ($S_t$, $A_t$, $R_t$, $S_{t+1}$), but rather, store them in a buffer and select them randomly for training. This is called **experience replay** and was introduced by Lin 1994.
 
 As expected from Q-learning, the value network is trained with semi-gradient methods, but bootstrapping is cached for $C$ steps at a time to stabilize learning. This means that **a network snapshot is used for bootstrapping** and it is updated every $C$ steps.
 
-Architecture-wise, they tested MLPs, CNNs and linear models. Out of the three, CNNs, unsurprisingly came out as winners with significant improvements over linear models, especially when paired with the other tweaks we mentioned.
+Architecture-wise, they tested MLPs, CNNs, and linear models. Out of the three, CNNs, unsurprisingly came out as winners with significant improvements over linear models, especially when paired with the other tweaks we mentioned.
 
 ---
 
@@ -1176,7 +1178,7 @@ Architecture-wise, they tested MLPs, CNNs and linear models. Out of the three, C
 
 The successes around the game of Go, namely the AlphaGo family of algorithms all revolve around **MCTS used as a policy improvement operator**. MCTS is a more refined version of a rollout algorithm.
 
-Using MC seems to be necessary as there seems to be no search-based methods to  efficiently evaluate states and state-actions for Go (all previous best performing methods use MCTS). For example, with MCTS we can keep some subtree without fully discarding previous information like in generic MC.
+Using MC seems to be necessary as there seems to be no search-based methods to  efficiently evaluate states and state-actions for Go (all previous best-performing methods use MCTS). For example, with MCTS we can keep some subtree without fully discarding previous information like in generic MC.
 
 AlphaGo's version of MCTS called Asynchronous Policy and Value MCTS (APV-MCTS), unlike traditional MCTS uses both the rollout policy and the value function to evaluate nodes in the tree. APV-MCTS also **keeps track of edge visits** and selects those with the most.
 
