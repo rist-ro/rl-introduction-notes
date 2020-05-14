@@ -543,31 +543,33 @@ The remaining, and **one of the most important dimensions is whether the method 
 
 Integrating function approximation methods with RL boils down to using function approximation methods such as those used in **supervised learning** to approximate value functions. This is done so we can apply RL methods to MDPs with an **infinite number of states** where we **don't have any guarantee of convergence** to an optimal policy even in the limit of infinite data and time.
 
-However, function approximation has its own issues arising with things such as non-stationarity, bootstrapping, and delayed targets.
+However, function approximation has its own issues arising with things such as dealing with non-stationarity, bootstrapping, and delayed targets.
 
 ---
 
 ### (9) On-policy prediction with approximation
 
-We consider the case of approximating the **state-value** function using a parameterized model $\hat{v}(s, w) \approx v_{\pi} (s)$ with the parameters $w \in \mathbb{R}^d$. this model can be any **parametric model** from a linear model to an ANN or a decision tree. Typically $d << |S|$ to prevent memorization. This leads to different dynamics than in the case of tabular methods such as approximate methods working better **on partially observable environments**.
+We consider the case of approximating the **state-value** function using a parameterized model $\hat{v}(s, w) \approx v_{\pi} (s)$ with the parameters $w \in \mathbb{R}^d$. This model can be any **parametric model** from a linear model to an ANN or a decision tree. Typically $d << |S|$ to prevent memorization. This leads to different dynamics than in the case of tabular methods. One example is that approximate methods tend to work better **on partially-observable environments**.
 
 ---
 
 #### Value-function approximation
 
-The target of updates in RL is to move the value function for some particular states to some desired values. We'll use the notation $s \mapsto u$ to indicate the value of the **value function for state $s$ should change in the direction of value $u$**.  This way MC updates can be written as $S_t \mapsto G_t$ and TD(0) ones as  $S_t \mapsto R_{t+1} + \gamma \hat{v}(S_{t+1}, w_t)$. 
+The target of updates in RL is to move the value function for some particular states towards some desired values. We'll use the notation $s \mapsto u$ to indicate that the value of the **value function for state $s$ should change in the direction of value $u$**.  This way MC updates, for example, can be written as $S_t \mapsto G_t$ and TD(0) ones as  $S_t \mapsto R_{t+1} + \gamma \hat{v}(S_{t+1}, w_t)$. 
 
-Each update can be seen as a single training example in a *supervised learning* scenario. This means that we should use learning methods which can deal with the non-stationarity that comes from the fact that the policy $\pi$ is continually changing and thus is its value function as well.
+Each update can be seen as a single training example in a *supervised learning* scenario. This means that we should use learning methods which can deal with the non-stationarity that comes from the fact that the policy $\pi$ is continually changing and so is its value function as well.
 
 ---
 
 #### The prediction objective (VE)
 
-Unlike in tabular methods where the updates of a few states' values did not affect others, function approximators do not have the same guarantee. Therefore an **unbiased optimization objective** is impossible to write. We instead define a distribution $\mu: s \mapsto [0,1], \sum_{s\in S} \mu(s) = 1$ by which we weight the MSE of our approximations and obtain what we call **Mean Squared Value Error**:
+Unlike in tabular methods where the updates of a few states' values did not affect others, function approximators do not have the same guarantee. An update for the value of one state will influence the approximation of potentially all the other states. 
+
+Therefore, an **unbiased optimization objective is impossible to write**. We instead define a distribution $\mu: s \mapsto [0,1], \sum_{s\in S} \mu(s) = 1$ by which we weight the MSE of our approximations and obtain what we call the **Mean Squared Value Error**:
 $$
 \overline{VE} (w) \triangleq  \sum_{s \in S} \mu(s) \left[ v_\pi (s) - \hat{v} (s, w) \right]^2
 $$
-We can define $\mu(s)$ as the proportion of time spent by the policy in state $s$. We call this the **on-policy distribution**. If we let $h(s)$ and $\eta(s)$ as, respectively, the probability of starting in state $s$  and the average number of timesteps spent in state $s$ per episode. We then get the following linear system:
+We can define $\mu(s)$ as the proportion of time spent by the policy in state $s$. We call this the **on-policy distribution**. If we define $h(s)$ and $\eta(s)$ as, respectively, the probability of starting in state $s$  and the average number of timesteps spent in state $s$ per episode. We then get the following linear system:
 $$
 \eta(s) = h(s) + \sum_{\bar{s} \in S} \eta(\bar{s}) \sum_{a \in A(\bar{s})} \pi (a | \bar{s}) p (s | \bar{s}, a), \forall s \in S
 $$
@@ -590,17 +592,17 @@ w_{t+1} \leftarrow &  w_t - \dfrac{1}{2} \alpha \nabla \left[ v_\pi(S_t) - \hat{
 $$
 Here $\nabla\hat{v}(S_t, w_t)$ stands for the gradient of $\hat{v}$ wrt. the components of $w$. Although ideally, we would want to perform the update in the direction of $S_t \mapsto v_\pi (S_t)$ we do not have the real value and instead, we will use a **noisy estimate** we call $U_t$. If $U_t$ is unbiased, it will be equal to $v_\pi (S_t)$ in expectation. If we only use observed examples for updating then we guarantee that **we are using the on-policy distribution.**
 
-This is basically the **vanilla SGD** algorithm if the estimate is unbiased and independent of $w_t$. Therefore, we can use MC estimates - which are unbiased - as the targets of the update and the convergence is guaranteed (<u>see page 202</u>).
+This is basically the **vanilla SGD** algorithm if this estimate is unbiased and independent of $w_t$. Therefore, one solution would be to use MC estimates (which are unbiased) as the targets of the update and the convergence is guaranteed (<u>see page 202</u>).
 
 By bootstrapping, however, we do not have the same guarantee. For example, using the TD(0) target $U_t = R_{t+1} + \gamma \hat{v}(S_{t+1}, w_t)$, our estimate depends on the current values of $w_t$ and a true gradient method would have to recursively compute the gradient. We do not do this, and instead, use the gradient for just the current values. This is called a **half-gradient** method and although it has weaker convergence guarantees, it can be used for **online and gradual** learning.
 
-A variant of SGD used is **state aggregation** where multiple states $S_t$ are grouped and a single component of the weight vector $w_k$ is updated (its gradient is considered 1, while the others' are 0). This basically simplifies the problem **through discretization**.
+A SGD variant used is **state aggregation** where multiple states $S_t$ are grouped and a single component of the weight vector $w_k$ is updated (its gradient is considered 1, while the others' are 0). This basically simplifies the problem **through discretization**.
 
 ---
 
 #### Linear methods
 
-One important  case of function approximation is that of the **linear model**. In this case, we define a feature function $x: S \mapsto \mathbb{R}^d$, $x(s) \triangleq {\left[\left(x_i(s)\right)_{i=1}^d\right]}^T$ where $x_i: S \mapsto \mathbb{R}$. The function approximation is then a linear transformation of these *features*.
+One important  case of function approximation is that of the **linear model**. In this case, we define a feature function $x: S \mapsto \mathbb{R}^d$, $x(s) \triangleq {\left[\left(x_i(s)\right)_{i=1}^d\right]}^T$ where $x_i: S \mapsto \mathbb{R}$ are feature functions. The function approximation is thus a linear transformation of these *features*.
 $$
 \hat{v}(s, w) \triangleq w^T x(s) = \sum_{i=1}^d w_ix_i(s)
 $$
@@ -608,11 +610,11 @@ The gradient of the value function wrt. $w$ is $\nabla \hat{v} (s,w) = x(s)$ and
 $$
 w_{t+1} \leftarrow W_t + \alpha \left[ U_t - \hat{v} (s_t, w_t)\right] x (S_t)
 $$
-For this model, **the MC algorithm has a convergence guarantee to the global optimum**. The **semi-gradient TD(0)** (where $U_t$ is the bootstrapped approximation), too, has a guarantee of convergence in the linear case, not to the global minimum, but rather to a point near it.  It can be shown that the semi-gradient method converges to a point called the **TD fixed point** which is within a bounded expansion of the global minimum:
+For this model, **the MC algorithm has a convergence guarantee to the global optimum**. The **semi-gradient TD(0)** (where $U_t$ is the bootstrapped approximation), too, has a guarantee of convergence for the linear model, not to the global minimum, but rather to a point near it. It can be shown that the semi-gradient method converges to a point called the **TD fixed point** which is within a bounded expansion of the global minimum:
 $$
 \overline{VE}(w_{TD}) \leq \dfrac{1}{1- \gamma} \min_w \overline{VE} (w)
 $$
-This result, as other convergence guarantees, is based on weighting according to the on-policy distribution.
+This result, as other convergence guarantees, is based on *weighting according to the on-policy distribution*.
 
 ---
 
