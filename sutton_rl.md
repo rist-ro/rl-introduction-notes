@@ -630,24 +630,24 @@ One example of candidate features are **polynomial** features, where every compo
 $$
 x_i(s) = \prod^k_{j=1} s_j^{c_{i,j}}
 $$
-Here $n$ stands for the highest degree polynomial for the features.
+Here $n$ stands for the highest degree polynomial for the features. The result is that each feature is a polynomial of the the components of the state vector.
 
 ---
 
 One can also use a **Fourier** basis for the features, which in practice seems to have better performance than the polynomials, but is not very good at dealing with discontinuities. 
 
-If we consider our state's components belonging to the interval $[0, 1]$ and given vectors $c^i = (c^i_1, ..., c^i_k)$ which define the frequency over each component, we get the features:
+If we consider our state's components belonging to the interval $[0, 1]$ and given the vectors $c^i = (c^i_1, ..., c^i_k)$ which define the frequency over each component, we get the features:
 $$
 x_i(s) = cos(\pi s^T c^i)
 $$
 
 ---
 
-Another possibility is the use of **coarse coding** where each state is mapped to a binary vector. Each component of this vector corresponds to whether the states is within a **receptive field**.  A receptive field can be any contiguous set of points in the state space, but, usually, they are **repeating and overlapping tiles or circles**.
+Another possibility is the use of **coarse coding** where each state is mapped to a binary vector. Each component of this vector corresponds to whether the states is within a **receptive field**.  A receptive field can be any contiguous set of points in the state space, but, usually, they are **repeating and overlapping tiles or circles** (<u>see page 215</u>).
 
-Tiling is the simpler and overall more feasible alternative. State aggregation is a particular case of coarse coding where a single such tiling is used. Also, asymmetrical offsets for the tiles are often preferred to uniform ones (see Fig 9.11 on page 219).
+Tiling is the simpler and overall more feasible alternative. State aggregation is a particular case of coarse coding where a single such tiling is used. Also, asymmetrical offsets for the tiles are often preferred to uniform ones (<u>see Fig 9.11 on page 219</u>).
 
-**Hashing** can be used to reduce a high number of tiles to a manageable number. Hashing is, however, non-injective and assigns multiple tiles to the same bin, effectively creating larger, even non-contiguous, tiles.
+**Hashing** can be used to reduce a high number of tiles to a manageable number. Hashing is, however, non-injective and assigns multiple tiles to the same bin, effectively creating larger,  and even non-contiguous tiles.
 
 ---
 
@@ -661,19 +661,21 @@ These are differentiable and, thus, learnable. The centers and variances can be 
 
 #### Nonlinear function approximation with ANNs
 
-ANNs can be used together with reinforcement learning methods in several ways. For example, they can be trained to approximate a value function **given the TD error**, maximize expected reward like a **gradient bandit**, or through **policy-gradient** methods.
+Artificial Neural Networks (ANNs) can be used together with reinforcement learning methods in several ways. For example, they can be trained to approximate a value function **given the TD error**, maximize expected reward like a **gradient bandit**, or through **policy-gradient** methods.
 
-All of the methods of improving training and generalization in ANNs can be applied to  ANNs in RL as well.
+All of the methods of improving training and generalization in ANNs can be applied to ANNs in RL as well.
 
 ---
 
 #### Least-Squares TD
 
-When using linear functions, we used an iterative gradient-based method to get the **TD fixed point** which is close to the real minimum $w_{TD} = A^{-1} b$. However, since $A$ and $b$ are the expectations of $x_t(x_t - \gamma x_{t+1})^T$ and $R_{t+1}x_t$, we can compute then as an average for all $x$ and $R$ values and use these estimates $\widehat{A_t}$ and $\widehat{b_t}$ (<u>see page 228</u>) and compute the closed-form value of $w_{TD}$. 
+When using linear functions, we used an iterative gradient-based method to get  to the **TD fixed point** which is close to the real minimum $w_{TD} = A^{-1} b$. However, since $A$ and $b$ are the expectations of $x_t(x_t - \gamma x_{t+1})^T$ and $R_{t+1}x_t$, we can compute then as an average for all $x$ and $R$ values. We can use these estimates $\widehat{A_t}$ and $\widehat{b_t}$ (<u>see page 228</u>) to compute the closed-form value of $w_{TD}$. 
 $$
 w_t \triangleq \widehat{A_t}^{-1}\widehat{b_t}
 $$
-This is called **Limited-Squares TD (LSTD)**.  Although it uses the closed-form and therefore a fixed number of computations, however, this number can be large mainly due to the inverse. Another  small advantage is the lack of a step-size hyperparameter. Also, this means that it cannot be applied online and it is not practical for non-stationary environments.
+This is called **Least-Squares TD (LSTD)** because of its use of the least-squares method.  Although it uses the closed-form and therefore a fixed number of computations, this number can be large mainly due to the inverse. 
+
+Another small advantage is the lack of a step-size hyperparameter. However, this means that it cannot be applied online and it is not practical for non-stationary environments.
 
 ---
 
@@ -698,7 +700,7 @@ $$
 
 #### Looking Deeper at On-policy Learning: Interest and Emphasis
 
-Using the on-policy distribution has strong theoretical results for semi-gradients methods. We can, however (do not know how strong the  results are) weigh the distribution according to a random variable $I_t$ called **interest**. the value of this variable is non-negative and will typically be at most 1.
+Using the on-policy distribution has strong theoretical results for semi-gradients methods. We can, however weigh the distribution according to a random variable. In this case we will use the variable $I_t$ which we call **interest**. The value of this variable is non-negative and will typically be less or equal to 1.
 
 We also define a discounted version of  interest called **emphasis**.
 $$
@@ -708,17 +710,19 @@ The formula above is for the n-step emphasis. Correspondingly, we also have an e
 $$
 w_{t+n} \leftarrow w_{t+n-1} + \alpha M_T \left[ G_{t:t+n} - \hat{v} (S_t, w_{t+n-1}) \right] \nabla\hat{v}(S_t, w_{t+n-1})
 $$
-For the MC case, we can let $G_{t:t+n} = G_t$ and only update at the end of the episode. These methods  have the added benefit that we can arbitrarily control the impact of every step on the learning.
+For the MC case, we can let $G_{t:t+n} = G_t$ and only update at the end of the episode. 
+
+The benefit of using interest-based methods is that we can arbitrarily control the impact of every step on the learning.
 
 ---
 
 #### Summary
 
-This chapter explored on-policy  function approximation reinforcement learning.  For the parametric model case of approximation, we defined the mean squared error value for those parameters $\overline{VE} (w)$. This the difference between the approximated value function $v_{\pi_w}$ and the real values **weighted by their on-policy distribution** $\mu$. 
+This chapter explored on-policy function approximation reinforcement learning.  For the parametric model case of approximation, we defined the mean squared error value for those parameters $\overline{VE} (w)$ as the difference between the approximated value function $v_{\pi_w}$ and the real values **weighted by their on-policy distribution** $\mu$. 
 
-We studied the **linear** parametric model case mostly as the $\overline{VE}$ has strong convergence guarantees to the optimum when using MC approximations and to a point close to the optimum when using **semi-gradient TD**.
+We studied the **linear** parametric model case mostly as the $\overline{VE}$ has strong convergence guarantees to the optimum when using MC approximations. The linear models also converge to a point close to the optimum called the **TD fixed point** when using **semi-gradient TD**.
 
-Different functions can be used as basis functions for the features. They range from polynomials to Fourier basis function and coarse coding. The latter, specifically **tile coding** discretize the feature space while being computationally cheap. RBFs can be also used as a form of continuous coding.
+Different functions can be used as basis functions for the features of the linear model. They range from polynomials to Fourier basis function and coarse coding. Coarse coding, specifically **tile coding**, discretizes the feature space to reduce computational complexity. RBFs can be also used as a form of continuous coding.
 
 Using gradient methods with non-linear models such as ANNs has become popular in recent years under the name of **deep RL**.
 
@@ -726,7 +730,7 @@ Using gradient methods with non-linear models such as ANNs has become popular in
 
 ### (10) On-policy control with approximation
 
-For on-policy control, we study **function approximation Sarsa**. The extension is simple in the case of episodic tasks but has to be reevaluated in the case of continuing ones. Doing so, we also start using **state-action values** instead of state values.
+For on-policy control, we study **function approximation Sarsa**. The extension to this case is simple for episodic tasks but has to be reevaluated in the case of continuing ones. In the process we will also start using **state-action values** instead of state values.
 
 ---
 
@@ -736,11 +740,11 @@ Here we discuss a semi-gradient version of Sarsa. To do this, we first define a 
 $$
 w_{t+1} \leftarrow w_t + \alpha \left[ U_t - \hat{q}(S_t, A_t, w_t)  \right] \nabla \hat{q}(S_t, A_t, w_t)
 $$
-If we replace $U_t$ with the discounted return of one-step Sarsa we get:
+If we replace $U_t$ with the discounted return of one-step Sarsa we get the following update rule:
 $$
 w_{t+1} \leftarrow w_t + \alpha \left[ R_{t+1} + \gamma \hat{q}(S_t, A_t, w_t) - \hat{q}(S_t, A_t, w_t)  \right] \nabla \hat{q}(S_t, A_t, w_t)
 $$
-This method being Sarsa, to guarantee convergence we have to only consider **soft policies** such as **$\varepsilon$-greedy**. **Optimistic initial estimates** can also be used for exploration. (full algorithm on page 244).
+This being Sarsa, to guarantee convergence we have to only use **soft policies** such as **$\varepsilon$-greedy**. **Optimistic initial estimates** can also be used for exploration (for full algorithm <u>see page 244</u>).
 
 ---
 
@@ -748,36 +752,36 @@ This method being Sarsa, to guarantee convergence we have to only consider **sof
 
 Just by writing the n-step return in terms of the new $\hat{q}$ function, we obtain the semi-gradient version of n-step Sarsa. For the full algorithm, <u>see page 247</u>.
 
-Similarly, we can also obtain a function-approximation version **of expected Sarsa**.
+Similarly we can also obtain a function-approximation version **of expected Sarsa**.
 
 ---
 
 #### Average reward: A new problem setting for continuing tasks
 
-Average reward is another formulation for return values, which, unlike the previous ones, has **no discounting**. The discounting setting is difficult with function approximation **in the continuing setting** and  average-reward is better suited.
+Instead of discounting the rewards to get the return, we can instead use the average reward as the optimization objective of our methods. We do this because the discounting setting is difficult to use with function approximation **in the continuing setting** and average reward is better suited.
 
-For a certain policy, we can, therefore, compute the average expected reward in the limit to infinity steps:
+For a given policy, we can compute the average expected reward in the limit to infinity steps:
 $$
 r(\pi) \triangleq \lim_{h \to \infty} \dfrac{1}{h}\mathbb{E} \left[ R_t | S_0, A_{0:t-1} \sim \pi \right] = \sum _s \mu _\pi (s) \sum _a \pi (a|s) \sum _{s', r} p (s', r| s,a) r
 $$
-Here $\mu_\pi (s)$ stands for the **steady-state distribution** and is equal to $\mu_\pi (s) = Pr \{S_t = s | A_{0:t-1} \sim \pi\}$ which has the property that sampling states from it and actions according to $\pi$, we remain under the same distribution.
+Here $\mu_\pi (s)$ stands for the **steady-state distribution** and is equal to $\mu_\pi (s) = Pr \{S_t = s | A_{0:t-1} \sim \pi\}$. This distribution has the property that sampling states from it and sampling actions according to $\pi$, we remain under the same distribution.
 $$
 \sum_s \mu_\pi (s) \sum _{s', r}\pi(a|s) p (s', r| s,a) = \mu_\pi (s')
 $$
-For this distribution to exist, we must assume an **ergodic **MDP, meaning that the probability of getting to a state, in the long run, is not conditioned by the starting state. We can then define a **differential** version of returns so that our values are bounded(?)
+For this distribution to exist, we must assume an **ergodic **MDP. Ergodic means that the probability of getting to a state, in the long run, is not conditioned by the starting state. We can then define a **differential** version of our returns so that the values are bounded:
 $$
 G_t \triangleq \sum_{i=1}^\infty R_{t+i} - r(\pi)
 $$
-Based on these *differential returns* we can define the differential versions of the Bellman equations and subsequently of the TD error, by keeping an estimate of the average reward $r(t)$ through $\bar{R}_t$.
+Based on these *differential returns* we can define the differential versions of the Bellman equations and subsequently of the TD error as well. We do this by keeping an estimate of the average reward $r(t)$ with the variable $\bar{R}_t$.
 $$
 \delta_t \triangleq R_{t+1} - \bar{R}_t + \hat{q} (S_{t+1}, A_{t+1}, w_t) - \hat{q} (S_t, A_t, w_t) \\
 \delta_t \triangleq R_{t+1} - \bar{R}_t + \hat{v} (S_{t+1}, w_t) - \hat{v} (S_t, w_t)
 $$
-Because they are given in terms of differential returns, they are bounded and we can use them with the **semi-gradient update rule**. In the long run, the TD error will thus converge to 0.
+Because these errors are given in terms of differential returns, they are bounded and we can use them with the **semi-gradient update rule**. In the long run, the TD error will thus converge to 0.
 $$
-w_{t+1} \leftarrow w_t + \alpha \delta_t \nabla \hat{q} (s_t, A_t, w_t) 
+w_{t+1} \leftarrow w_t + \alpha \delta_t \nabla \hat{q} (s_t, A_t, w_t)
 $$
-During training, we need to simultaneously **keep an average of the rewards**. A full algorithm is presented on page 251.
+The main downside is that during training, we also need to **keep an average of the rewards**. A full algorithm is presented on <u>page 251</u>.
 
 ---
 
@@ -785,15 +789,15 @@ During training, we need to simultaneously **keep an average of the rewards**. A
 
 **In the continuing formulation**, under the assumption of **ergodicity of the MDP**, for the function approximation methods, the discount is redundant in the computation of returns. 
 
-Ergodicity, like in the case of differential returns, ensures that an average reward can be computed in the limit to infinity. Under this assumption, we can show that the average reward when using discounts **is proportional** to one without discounting as its value is $r(\pi) /(1-\gamma)$.  This renders the discounting factor $\gamma$ useless (a full proof is available on page 254).
+Ergodicity, like in the case of differential returns, ensures that an average reward can be computed in the limit to infinity. Under this assumption, we can show that the average reward when using discounts **is proportional** to one without discounting as its value is $r(\pi) /(1-\gamma)$.  This renders the discounting factor $\gamma$ useless (<u>a full proof is available on page 254</u>).
 
-The authors claim this stems from **the lack of a policy improvement theorem** for the function approximation case, where improvement in one state may not necessarily mean improvement of the policy. (how does this translate to episodic tasks?)
+The authors claim this stems from **the lack of a policy improvement theorem** for the function approximation case, where improvement in one state may not necessarily mean improvement of the policy. 
 
 ---
 
 #### Differential semi-gradient n-step Sarsa
 
-This is basically the average reward formulation of the n-step Sarsa algorithm. The main difference is that at timestep $t+n$, **the return is defined in terms of differential** rewards instead of discounted ones.
+Here we present the average reward formulation of the n-step Sarsa algorithm. The main difference is that at timestep $t+n$, **the return is defined in terms of differential** rewards instead of discounted ones.
 $$
 G_{t:t+n} \triangleq (\sum_{i=1}^n  R_{t+i} - \bar{R}_{t+n-1}) + \hat{q}(S_{t+n}, A_{t+n}, w_{t+n-1})
 $$
@@ -801,13 +805,13 @@ Here $\bar{R}_{t+n-1}$ is the estimate of the average reward at timestep $t+n-1$
 $$
 \delta_t \triangleq G_{t:t+n} - \hat{q}(S_t, A_t, w)
 $$
-Using this TD error, the algorithm is the same as normal Sarsa, with the addition of the estimation of the average reward (<u>see page 255</u>).
+Using this TD error, the algorithm is the same as normal Sarsa, with the additional step of estimating the average reward (<u>see page 255</u>).
 
 ---
 
 #### Summary
 
-In this chapter, we saw adaptations of the Sarsa algorithm to function approximation cases. Due to the use of semi-gradient methods, we had to use **average rewards $r(\pi)$ for the continuing case** to ensure they converged. This variant of Sarsa was called **differential Sarsa** which **made the discounting coefficient redundant**.
+In this chapter, we saw adaptations of the Sarsa algorithm to function approximation cases. Due to the use of semi-gradient methods, we had to use **average rewards $r(\pi)$ for the continuing case** to ensure they converged. This variant of Sarsa was called **differential Sarsa** due to its use of differential rewards.
 
 ---
 
