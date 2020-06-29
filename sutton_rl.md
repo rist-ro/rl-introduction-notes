@@ -1,7 +1,10 @@
-# An overview of "*Reinforcement Learning: An Introduction (2nd edition)*" - Nichita Uțiu - Romanian Institute of Science and technology
+# An overview of "*Reinforcement Learning: An Introduction (2nd edition)*" 
 
-Notes on Sutton and Barto's second edition of the book from 2018. These are my main takeaways from the book structured on a per-chapter basis with a main focus on the theoretical aspects. These can be used as a support for the book.
+**Nichita Uțiu, Romanian Institute of Science and Technology, Cluj-Napoca, Romania**
 
+This is a collection of notes on Sutton and Barto's  book ["*Reinforcement Learning: An Introduction (2nd edition)*"](http://incompleteideas.net/book/the-book-2nd.html) from 2018. These are some of the main takeaways from the book structured on a per-chapter basis with a main focus on the theoretical aspects. These can be used as a support for the book.
+
+**Note:** The numbers in round brackets in the headings indicate the chapters of the book the notes correspond to.
 $$
 \DeclareMathOperator*{\E}{\mathbb{E}}
 \DeclareMathOperator*{\argmax}{arg\,max}
@@ -12,7 +15,7 @@ $$
 
 ## Part I - Tabular methods
 
-### (3) Finite Markov Decision Processes(MDPs)
+### (3) Finite Markov Decision Processes (MDPs)
 
 A Markov decision process is the quadruplet ($S$, $A$, $R$, $p$) where $S$, $A$, $R$ are the *state*, *action* and *reward* spaces respectively, while p is a function of 4 arguments:
 $$
@@ -76,7 +79,7 @@ $$
 
 ---
 
-### (4) Dynamic Programming(DP)
+### (4) Dynamic Programming (DP)
 
 A lot of RL algorithms revolve around a framework called **General Policy Iteration (GPI)** which involves 2 steps:
 
@@ -821,11 +824,13 @@ This chapter deals with the extension of off-policy methods to function approxim
 
 #### Semi-gradient methods
 
-Unlike tabular methods, function approximation ones **are not guaranteed stable**. Tabular methods correspond to a special case of function approximation.  One straightforward adaptation is to use **importance sampling** and one step TD(0).
+Unlike tabular methods, function approximation methods **are not guaranteed stable**. Tabular methods correspond to a special case of function approximation.  
+
+One way to adapt off-policy methods to function approximation is to use **importance sampling** and one step TD(0).
 $$
 w_{t+1} \leftarrow w_t + \alpha \rho_t  \delta_t \nabla \hat{v} (S_t, w_t)
 $$
-In this equation, $\rho_t$ is the classical importance sampling ratio and $\delta_t$ is the TD error, **either discounted or differential**. This way we can also generalize *expected Sarsa*. For example, the one step case looks like this:
+In this equation, $\rho_t$ is the importance sampling ratio and $\delta_t$ is the TD error, **either discounted or differential**. This way we can also generalize *expected Sarsa*. For example, the one step case of expected Sarsa looks like this:
 $$
 w_{t+1} \leftarrow w_t + \alpha \delta_t \nabla \hat{q} (s_t, A_t, w_t)\\
 \delta_t \triangleq R_{t+1} + \gamma \sum_a \pi (a|S_{T+1})\hat{q}(s_{t+1}, a, w_t) - \hat(S_t, A_t, w_t) \text{ (episodic)} \\
@@ -833,7 +838,7 @@ w_{t+1} \leftarrow w_t + \alpha \delta_t \nabla \hat{q} (s_t, A_t, w_t)\\
 $$
 The problem of weighting the action-states is still **open to research** as the expectation can not be computed as clearly as in the tabular case. *N-step expected Sarsa* can be obtained through the same substitutions.
 
-We can also adapt the *backup tree algorithm* to the function approximation case, by putting it in the semi gradient framework. The TD error here is the same as before for episodic or continuing cases.
+We can also adapt the *backup tree algorithm* to the function approximation case by putting it in the semi gradient framework. The TD error here is the same as the one mentioned before for episodic or continuing cases.
 $$
 W_{t+n} \leftarrow w_{t+n-1} + \alpha \left[ G_{t:t+n} - \hat{q} (S_t, A_t, w_{t+n-1}) \right] \nabla \hat{q} (S_t, A_t, w_{t+n-1}) \\
 G_{t:t+n} \triangleq \hat{q} (S_t, A_t, w_{t-1}) + \sum _{k=t}^{t+n-1} \delta_k \prod_{i=t+1}^k \gamma \pi(A_t|S_i)
@@ -845,9 +850,9 @@ $$
 
 Due to the interdependence of states in the approximation of value functions (ie. modifying the estimation for one state modifies it for all of them) **off-policy methods can diverge**.
 
-As the example on page 260 shows, this happens in the off-policy case and not the on-policy one because over-/under-estimations of the value functions may never be corrected. Because the actions are not taken and updated on-policy the importance sampling ratio $\rho_t$  **is often less than 1 and sometimes even 0 in the off-policy case**. This leads to the initial error **never being corrected**.
+As the example on <u>page 260</u> shows, this happens in the off-policy case and not the on-policy one because, now, over-/under-estimations of the value functions may never be corrected. Because, when using off-policy methods, the actions are not taken or updated according to the on-policy distribution, the importance sampling ratio $\rho_t$  **is often less than 1 and sometimes even 0 in the off-policy case**. This leads to initial errors in the estimation of values for some states to **never be corrected**.
 
-The paper presents on pages 261 and  263 two examples in which even using expected and/or synchronous updates leads to divergence. **Baird's example** even diverges for Q-learning. Q-learning does seem to always converge when given a policy which is close **to the target greedy one**, although there is no theoretical proof of this.
+The paper presents <u>on pages 261 and  263</u> two examples in which even using expected and/or synchronous updates leads to divergence. **Baird's example** even diverges for Q-learning. Q-learning does seem to always converge when given a policy which is close **to the target greedy one**, although there is no theoretical proof of this.
 
 Some specific function approximation methods can be used which do not extrapolate to unobserved targets. This guarantee **does not apply** to popular ones such as ANNs and linear models with tile coding.
 
